@@ -45,14 +45,16 @@ import org.springframework.data.repository.Repository;
  * @author Andy Wilkinson
  * @since 1.2.0
  */
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-@Inherited
-@SpringBootConfiguration
-@EnableAutoConfiguration
+@Target(ElementType.TYPE) //用来描述注解的适用场景
+@Retention(RetentionPolicy.RUNTIME) //retention: 保持  被它所注解的注解保留多久
+@Documented //生成文档时会显示它所修饰的类
+@Inherited //在注解上使用@Inherited 表示该注解会被子类继承，仅针对类，成员属性、方法并不受此注释的影响。
+@SpringBootConfiguration //指示此类提供了应用程序配置
+@EnableAutoConfiguration //开启应用上下文自动配置
 @ComponentScan(excludeFilters = { @Filter(type = FilterType.CUSTOM, classes = TypeExcludeFilter.class),
 		@Filter(type = FilterType.CUSTOM, classes = AutoConfigurationExcludeFilter.class) })
+//@ComponentScan：把符合扫描规则的类装配到spring容器中
+// FilterType.CUSTOM:自定义规则
 public @interface SpringBootApplication {
 
 	/**

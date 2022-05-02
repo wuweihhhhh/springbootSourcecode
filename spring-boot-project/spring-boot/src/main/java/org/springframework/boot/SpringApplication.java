@@ -87,14 +87,19 @@ import org.springframework.web.context.support.StandardServletEnvironment;
  * Class that can be used to bootstrap and launch a Spring application from a Java main
  * method. By default class will perform the following steps to bootstrap your
  * application:
+ * 启动项目步骤：
  *
  * <ul>
  * <li>Create an appropriate {@link ApplicationContext} instance (depending on your
  * classpath)</li>
+ * 创建一个应用上下文实例
  * <li>Register a {@link CommandLinePropertySource} to expose command line arguments as
  * Spring properties</li>
+ * 注册命令行参数为spring的参数
  * <li>Refresh the application context, loading all singleton beans</li>
+ * 刷新应用上下文，加载所有单例bean
  * <li>Trigger any {@link CommandLineRunner} beans</li>
+ * 触发bean
  * </ul>
  *
  * In most circumstances the static {@link #run(Class, String[])} method can be called
@@ -195,7 +200,7 @@ public class SpringApplication {
 
 	private static final Log logger = LogFactory.getLog(SpringApplication.class);
 
-	private Set<Class<?>> primarySources;
+	private Set<Class<?>> primarySources; //主要资源：Sbdemo.class
 
 	private Set<String> sources = new LinkedHashSet<>();
 
@@ -211,7 +216,7 @@ public class SpringApplication {
 
 	private Banner banner;
 
-	private ResourceLoader resourceLoader;
+	private ResourceLoader resourceLoader; //资源加载器
 
 	private BeanNameGenerator beanNameGenerator;
 
@@ -219,7 +224,7 @@ public class SpringApplication {
 
 	private Class<? extends ConfigurableApplicationContext> applicationContextClass;
 
-	private WebApplicationType webApplicationType;
+	private WebApplicationType webApplicationType; //项目类型
 
 	private boolean headless = true;
 
@@ -264,12 +269,16 @@ public class SpringApplication {
 	 * @see #setSources(Set)
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
+	//ResourceLoader：资源加载器
 	public SpringApplication(ResourceLoader resourceLoader, Class<?>... primarySources) {
 		this.resourceLoader = resourceLoader;
 		Assert.notNull(primarySources, "PrimarySources must not be null");
 		this.primarySources = new LinkedHashSet<>(Arrays.asList(primarySources));
-		this.webApplicationType = WebApplicationType.deduceFromClasspath();
-		setInitializers((Collection) getSpringFactoriesInstances(ApplicationContextInitializer.class));
+		this.webApplicationType = WebApplicationType.deduceFromClasspath(); //根据类路径推断应用类型
+
+		//getSpringFactoriesInstances(ApplicationContextInitializer.class)：获取工厂实例
+		setInitializers((Collection) getSpringFactoriesInstances(ApplicationContextInitializer.class)); //初始化工厂实例
+
 		setListeners((Collection) getSpringFactoriesInstances(ApplicationListener.class));
 		this.mainApplicationClass = deduceMainApplicationClass();
 	}
@@ -420,10 +429,16 @@ public class SpringApplication {
 		return getSpringFactoriesInstances(type, new Class<?>[] {});
 	}
 
+	//获取工厂实例
 	private <T> Collection<T> getSpringFactoriesInstances(Class<T> type, Class<?>[] parameterTypes, Object... args) {
-		ClassLoader classLoader = getClassLoader();
+		//type: ApplicationContextInitializer.class
+
+		ClassLoader classLoader = getClassLoader(); //获取类加载器
+
+
 		// Use names and ensure unique to protect against duplicates
 		Set<String> names = new LinkedHashSet<>(SpringFactoriesLoader.loadFactoryNames(type, classLoader));
+
 		List<T> instances = createSpringFactoriesInstances(type, parameterTypes, classLoader, args, names);
 		AnnotationAwareOrderComparator.sort(instances);
 		return instances;
@@ -1223,7 +1238,7 @@ public class SpringApplication {
 	 * @return the running {@link ApplicationContext}
 	 */
 	public static ConfigurableApplicationContext run(Class<?>[] primarySources, String[] args) {
-		return new SpringApplication(primarySources).run(args);
+		return new SpringApplication(primarySources).run(args); // 新建SpringApplication实例
 	}
 
 	/**

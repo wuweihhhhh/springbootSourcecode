@@ -5,10 +5,12 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.stereotype.Controller;
 
-@SpringBootApplication(exclude = Hello.class)
+@SpringBootApplication()
 public class SbdemoApplication {
 
 	public static void main(String[] args) {
+
+		//运行spring Boot 项目
 		SpringApplication.run(SbdemoApplication.class, args);
 	}
 

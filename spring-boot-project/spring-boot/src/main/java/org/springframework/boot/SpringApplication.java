@@ -200,49 +200,49 @@ public class SpringApplication {
 
 	private static final Log logger = LogFactory.getLog(SpringApplication.class);
 
-	private Set<Class<?>> primarySources; //主要资源：Sbdemo.class
+	private Set<Class<?>> primarySources; //主要资源：Sbdemo.class  @SpringBootApplication注解标注的类
 
-	private Set<String> sources = new LinkedHashSet<>();
+	private Set<String> sources = new LinkedHashSet<>(); //资源  注册成Bean的全限定名，默认为空后续会将primarySources添加进去
 
-	private Class<?> mainApplicationClass;
+	private Class<?> mainApplicationClass;     // main方法类，一般与primarySources相同
 
-	private Banner.Mode bannerMode = Banner.Mode.CONSOLE;
+	private Banner.Mode bannerMode = Banner.Mode.CONSOLE; //banner模式 启动Banner图，默认会启动SpringBootBanner
 
-	private boolean logStartupInfo = true;
+	private boolean logStartupInfo = true; //开启日志分析     // 是否大于启动的StopWatch的信息
 
-	private boolean addCommandLineProperties = true;
+	private boolean addCommandLineProperties = true; //添加命令行属性     // 是否大于main方法启动的args参数
 
-	private boolean addConversionService = true;
+	private boolean addConversionService = true;     // 是否为ApplicationContext添加ConversionService
 
 	private Banner banner;
 
-	private ResourceLoader resourceLoader; //资源加载器
+	private ResourceLoader resourceLoader; //资源加载器 类加载器，用于在ApplicationContext还没有启动时，加载类
 
-	private BeanNameGenerator beanNameGenerator;
+	private BeanNameGenerator beanNameGenerator;     // Bean的名称生成器，否则走默认的名称生成方式（第一个字母小写的驼峰，多个大写连着的除外）
 
-	private ConfigurableEnvironment environment;
+	private ConfigurableEnvironment environment;     // Spring的Environment
 
-	private Class<? extends ConfigurableApplicationContext> applicationContextClass;
+	private Class<? extends ConfigurableApplicationContext> applicationContextClass;     // ApplicationContext的子类类型
 
-	private WebApplicationType webApplicationType; //项目类型
+	private WebApplicationType webApplicationType; //项目类型 用于确认上面生成的applicationContextClass类型
 
-	private boolean headless = true;
+	private boolean headless = true;     // 配置headless的值
 
-	private boolean registerShutdownHook = true;
+	private boolean registerShutdownHook = true;     // 是否注册钩子
 
-	private List<ApplicationContextInitializer<?>> initializers;
+	private List<ApplicationContextInitializer<?>> initializers; //应用上下文工厂类的实例
 
-	private List<ApplicationListener<?>> listeners;
+	private List<ApplicationListener<?>> listeners; //应用监听器
 
-	private Map<String, Object> defaultProperties;
+	private Map<String, Object> defaultProperties;     // 默认配置，会叠加@ConfigurationProperties
 
-	private Set<String> additionalProfiles = new HashSet<>();
+	private Set<String> additionalProfiles = new HashSet<>(); //附加的profile
 
-	private boolean allowBeanDefinitionOverriding;
+	private boolean allowBeanDefinitionOverriding;     // 是否允许BeanDefinition覆盖
 
-	private boolean isCustomEnvironment = false;
+	private boolean isCustomEnvironment = false;     // 是否自定义Environment，因为Spring的ApplicationContext在refresh时会初始化
 
-	private boolean lazyInitialization = false;
+	private boolean lazyInitialization = false;     // 是否加载LazyInitializationBeanFactoryPostProcessor类型的BeanPostProcessor
 
 	/**
 	 * Create a new {@link SpringApplication} instance. The application context will load
@@ -269,18 +269,18 @@ public class SpringApplication {
 	 * @see #setSources(Set)
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	//ResourceLoader：资源加载器
+	//ResourceLoader：资源加载器  primarySources：运行的类
 	public SpringApplication(ResourceLoader resourceLoader, Class<?>... primarySources) {
 		this.resourceLoader = resourceLoader;
 		Assert.notNull(primarySources, "PrimarySources must not be null");
 		this.primarySources = new LinkedHashSet<>(Arrays.asList(primarySources));
 		this.webApplicationType = WebApplicationType.deduceFromClasspath(); //根据类路径推断应用类型
 
-		//getSpringFactoriesInstances(ApplicationContextInitializer.class)：获取工厂实例
+		//getSpringFactoriesInstances(ApplicationContextInitializer.class)：获取该类的工厂实例
 		setInitializers((Collection) getSpringFactoriesInstances(ApplicationContextInitializer.class)); //初始化工厂实例
 
-		setListeners((Collection) getSpringFactoriesInstances(ApplicationListener.class));
-		this.mainApplicationClass = deduceMainApplicationClass();
+		setListeners((Collection) getSpringFactoriesInstances(ApplicationListener.class)); //初始化监听器
+		this.mainApplicationClass = deduceMainApplicationClass(); //寻找main方法
 	}
 
 	private Class<?> deduceMainApplicationClass() {
@@ -305,7 +305,7 @@ public class SpringApplication {
 	 * @return a running {@link ApplicationContext}
 	 */
 	public ConfigurableApplicationContext run(String... args) {
-		StopWatch stopWatch = new StopWatch();
+		StopWatch stopWatch = new StopWatch(); //监视是否暂停
 		stopWatch.start();
 		ConfigurableApplicationContext context = null;
 		Collection<SpringBootExceptionReporter> exceptionReporters = new ArrayList<>();
@@ -436,11 +436,12 @@ public class SpringApplication {
 		ClassLoader classLoader = getClassLoader(); //获取类加载器
 
 
+		// SpringFactoriesLoader.loadFactoryNames(type, classLoader): 加载工厂类 这里是ApplicationContextInitializer.class
 		// Use names and ensure unique to protect against duplicates
-		Set<String> names = new LinkedHashSet<>(SpringFactoriesLoader.loadFactoryNames(type, classLoader));
+		Set<String> names = new LinkedHashSet<>(SpringFactoriesLoader.loadFactoryNames(type, classLoader)); //工厂类的全限定名集合
 
-		List<T> instances = createSpringFactoriesInstances(type, parameterTypes, classLoader, args, names);
-		AnnotationAwareOrderComparator.sort(instances);
+		List<T> instances = createSpringFactoriesInstances(type, parameterTypes, classLoader, args, names); //获取工厂类实例
+		AnnotationAwareOrderComparator.sort(instances); //对实例进行排序, 根据order排序
 		return instances;
 	}
 
@@ -451,9 +452,9 @@ public class SpringApplication {
 		for (String name : names) {
 			try {
 				Class<?> instanceClass = ClassUtils.forName(name, classLoader);
-				Assert.isAssignable(type, instanceClass);
-				Constructor<?> constructor = instanceClass.getDeclaredConstructor(parameterTypes);
-				T instance = (T) BeanUtils.instantiateClass(constructor, args);
+				Assert.isAssignable(type, instanceClass); //Assert.isAssignable 判断是否为父类和子类的关系
+				Constructor<?> constructor = instanceClass.getDeclaredConstructor(parameterTypes); //获取参数对应的构造器
+				T instance = (T) BeanUtils.instantiateClass(constructor, args); //构造实例
 				instances.add(instance);
 			}
 			catch (Throwable ex) {
@@ -1238,7 +1239,7 @@ public class SpringApplication {
 	 * @return the running {@link ApplicationContext}
 	 */
 	public static ConfigurableApplicationContext run(Class<?>[] primarySources, String[] args) {
-		return new SpringApplication(primarySources).run(args); // 新建SpringApplication实例
+		return new SpringApplication(primarySources).run(args); // 新建SpringApplication实例并运行
 	}
 
 	/**

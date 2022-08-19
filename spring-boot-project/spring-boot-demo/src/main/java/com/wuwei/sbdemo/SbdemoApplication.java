@@ -1,10 +1,12 @@
 package com.wuwei.sbdemo;
 
 import com.wuwei.sbdemo.Controller.Hello;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.stereotype.Controller;
 
+@MapperScan(basePackages = "com.wuwei.sbdemo.mapper")
 @SpringBootApplication()
 public class SbdemoApplication {
 

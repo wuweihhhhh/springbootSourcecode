@@ -79,13 +79,13 @@ class BeanDefinitionLoader {
 		Assert.notNull(registry, "Registry must not be null");
 		Assert.notEmpty(sources, "Sources must not be empty");
 		this.sources = sources;
-		this.annotatedReader = new AnnotatedBeanDefinitionReader(registry);
-		this.xmlReader = new XmlBeanDefinitionReader(registry);
-		if (isGroovyPresent()) {
-			this.groovyReader = new GroovyBeanDefinitionReader(registry);
+		this.annotatedReader = new AnnotatedBeanDefinitionReader(registry); //注释bean定义reader
+		this.xmlReader = new XmlBeanDefinitionReader(registry); //xmlbean定义reader
+		if (isGroovyPresent()) {  //如果是使用groovy
+			this.groovyReader = new GroovyBeanDefinitionReader(registry);  //创建groovy定于reader
 		}
-		this.scanner = new ClassPathBeanDefinitionScanner(registry);
-		this.scanner.addExcludeFilter(new ClassExcludeFilter(sources));
+		this.scanner = new ClassPathBeanDefinitionScanner(registry); //类路径Bean定义reader
+		this.scanner.addExcludeFilter(new ClassExcludeFilter(sources)); //去除被排除的资源
 	}
 
 	/**
@@ -131,6 +131,7 @@ class BeanDefinitionLoader {
 	}
 
 	private int load(Object source) {
+		// 根据资源类型加载资源
 		Assert.notNull(source, "Source must not be null");
 		if (source instanceof Class<?>) {
 			return load((Class<?>) source);
@@ -148,21 +149,21 @@ class BeanDefinitionLoader {
 	}
 
 	private int load(Class<?> source) {
-		if (isGroovyPresent() && GroovyBeanDefinitionSource.class.isAssignableFrom(source)) {
+		if (isGroovyPresent() && GroovyBeanDefinitionSource.class.isAssignableFrom(source)) { //groovy: JVM的一个替代语言
 			// Any GroovyLoaders added in beans{} DSL can contribute beans here
-			GroovyBeanDefinitionSource loader = BeanUtils.instantiateClass(source, GroovyBeanDefinitionSource.class);
+			GroovyBeanDefinitionSource loader = BeanUtils.instantiateClass(source, GroovyBeanDefinitionSource.class); //使用Groovy初始化类
 			load(loader);
 		}
 		if (isComponent(source)) {
-			this.annotatedReader.register(source);
+			this.annotatedReader.register(source); //reader注册资源
 			return 1;
 		}
 		return 0;
 	}
 
 	private int load(GroovyBeanDefinitionSource source) {
-		int before = this.xmlReader.getRegistry().getBeanDefinitionCount();
-		((GroovyBeanDefinitionReader) this.groovyReader).beans(source.getBeans());
+		int before = this.xmlReader.getRegistry().getBeanDefinitionCount(); //获取bean定义的个数
+		((GroovyBeanDefinitionReader) this.groovyReader).beans(source.getBeans()); //获取资源的bean  添加到reader中
 		int after = this.xmlReader.getRegistry().getBeanDefinitionCount();
 		return after - before;
 	}

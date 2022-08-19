@@ -58,7 +58,7 @@ public class ApplicationConversionService extends FormattingConversionService {
 		if (embeddedValueResolver != null) {
 			setEmbeddedValueResolver(embeddedValueResolver);
 		}
-		configure(this);
+		configure(this); //配置格式和转换器
 	}
 
 	/**
@@ -94,10 +94,10 @@ public class ApplicationConversionService extends FormattingConversionService {
 	 * ConversionService
 	 */
 	public static void configure(FormatterRegistry registry) {
-		DefaultConversionService.addDefaultConverters(registry);
-		DefaultFormattingConversionService.addDefaultFormatters(registry);
-		addApplicationFormatters(registry);
-		addApplicationConverters(registry);
+		DefaultConversionService.addDefaultConverters(registry); //添加默认转换器
+		DefaultFormattingConversionService.addDefaultFormatters(registry); //添加默认格式
+		addApplicationFormatters(registry); //添加应用程序格式
+		addApplicationConverters(registry); //添加应用程序格式
 	}
 
 	/**

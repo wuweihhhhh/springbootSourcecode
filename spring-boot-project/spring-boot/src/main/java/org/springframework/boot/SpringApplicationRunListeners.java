@@ -56,7 +56,7 @@ class SpringApplicationRunListeners {
 
 	void contextPrepared(ConfigurableApplicationContext context) {
 		for (SpringApplicationRunListener listener : this.listeners) {
-			listener.contextPrepared(context);
+			listener.contextPrepared(context); //监听器准备上下文
 		}
 	}
 
@@ -80,14 +80,14 @@ class SpringApplicationRunListeners {
 
 	void failed(ConfigurableApplicationContext context, Throwable exception) {
 		for (SpringApplicationRunListener listener : this.listeners) {
-			callFailedListener(listener, context, exception);
+			callFailedListener(listener, context, exception);   //调用失败监听器
 		}
 	}
 
 	private void callFailedListener(SpringApplicationRunListener listener, ConfigurableApplicationContext context,
 			Throwable exception) {
 		try {
-			listener.failed(context, exception);
+			listener.failed(context, exception);  //执行失败监听器
 		}
 		catch (Throwable ex) {
 			if (exception == null) {

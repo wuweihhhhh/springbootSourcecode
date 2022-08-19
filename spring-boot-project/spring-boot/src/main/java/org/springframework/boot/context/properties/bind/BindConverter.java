@@ -94,7 +94,7 @@ final class BindConverter {
 			return null;
 		}
 		return (T) this.conversionService.convert(value, TypeDescriptor.forObject(value),
-				new ResolvableTypeDescriptor(type, annotations));
+				new ResolvableTypeDescriptor(type, annotations)); //解析类型描述
 	}
 
 	static BindConverter get(ConversionService conversionService,

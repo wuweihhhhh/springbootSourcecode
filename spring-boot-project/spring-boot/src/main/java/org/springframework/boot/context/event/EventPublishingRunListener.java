@@ -49,7 +49,7 @@ public class EventPublishingRunListener implements SpringApplicationRunListener,
 
 	private final String[] args;
 
-	private final SimpleApplicationEventMulticaster initialMulticaster;
+	private final SimpleApplicationEventMulticaster initialMulticaster; //应用程序事件广播器
 
 	public EventPublishingRunListener(SpringApplication application, String[] args) {
 		this.application = application;
@@ -67,13 +67,13 @@ public class EventPublishingRunListener implements SpringApplicationRunListener,
 
 	@Override
 	public void starting() {
-		this.initialMulticaster.multicastEvent(new ApplicationStartingEvent(this.application, this.args));
+		this.initialMulticaster.multicastEvent(new ApplicationStartingEvent(this.application, this.args)); //广播事件：应用启动事件　　启动应用程序监听器
 	}
 
 	@Override
 	public void environmentPrepared(ConfigurableEnvironment environment) {
 		this.initialMulticaster
-				.multicastEvent(new ApplicationEnvironmentPreparedEvent(this.application, this.args, environment));
+				.multicastEvent(new ApplicationEnvironmentPreparedEvent(this.application, this.args, environment)); //广播环境准备事件 启动监听器
 	}
 
 	@Override
@@ -88,9 +88,9 @@ public class EventPublishingRunListener implements SpringApplicationRunListener,
 			if (listener instanceof ApplicationContextAware) {
 				((ApplicationContextAware) listener).setApplicationContext(context);
 			}
-			context.addApplicationListener(listener);
+			context.addApplicationListener(listener); //上下文和监听器互相注册
 		}
-		this.initialMulticaster.multicastEvent(new ApplicationPreparedEvent(this.application, this.args, context));
+		this.initialMulticaster.multicastEvent(new ApplicationPreparedEvent(this.application, this.args, context));  //广播事件：应用程序准备
 	}
 
 	@Override

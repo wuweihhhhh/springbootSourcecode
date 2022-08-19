@@ -78,7 +78,7 @@ public final class ConfigurationPropertySources {
 		}
 		if (attached == null) {
 			sources.addFirst(new ConfigurationPropertySourcesPropertySource(ATTACHED_PROPERTY_SOURCE_NAME,
-					new SpringConfigurationPropertySources(sources)));
+					new SpringConfigurationPropertySources(sources))); //配置 配置属性资源
 		}
 	}
 

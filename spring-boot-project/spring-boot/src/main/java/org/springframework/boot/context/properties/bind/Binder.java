@@ -304,7 +304,7 @@ public class Binder {
 		Assert.notNull(name, "Name must not be null");
 		Assert.notNull(target, "Target must not be null");
 		handler = (handler != null) ? handler : this.defaultBindHandler;
-		Context context = new Context();
+		Context context = new Context(); //
 		return bind(name, target, handler, context, false, create);
 	}
 
@@ -312,9 +312,9 @@ public class Binder {
 			boolean allowRecursiveBinding, boolean create) {
 		context.clearConfigurationProperty();
 		try {
-			Bindable<T> replacementTarget = handler.onStart(name, target, context);
+			Bindable<T> replacementTarget = handler.onStart(name, target, context); //处理器启动 可拓展
 			if (replacementTarget == null) {
-				return handleBindResult(name, target, handler, context, null, create);
+				return handleBindResult(name, target, handler, context, null, create); //处理绑定结果
 			}
 			target = replacementTarget;
 			Object bound = bindObject(name, target, handler, context, allowRecursiveBinding);
@@ -328,22 +328,22 @@ public class Binder {
 	private <T> T handleBindResult(ConfigurationPropertyName name, Bindable<T> target, BindHandler handler,
 			Context context, Object result, boolean create) throws Exception {
 		if (result != null) {
-			result = handler.onSuccess(name, target, context, result);
-			result = context.getConverter().convert(result, target);
+			result = handler.onSuccess(name, target, context, result); //处理器触发成功函数
+			result = context.getConverter().convert(result, target); //转换器转换
 		}
 		if (result == null && create) {
-			result = create(target, context);
-			result = handler.onCreate(name, target, context, result);
-			result = context.getConverter().convert(result, target);
+			result = create(target, context); //创建数据绑定实例
+			result = handler.onCreate(name, target, context, result); //处理器触发创建函数
+			result = context.getConverter().convert(result, target); //转换 result:dataObject target:spring.main
 			Assert.state(result != null, () -> "Unable to create instance for " + target.getType());
 		}
-		handler.onFinish(name, target, context, result);
+		handler.onFinish(name, target, context, result); //处理器触发结束函数 可扩展
 		return context.getConverter().convert(result, target);
 	}
 
 	private Object create(Bindable<?> target, Context context) {
 		for (DataObjectBinder dataObjectBinder : this.dataObjectBinders) {
-			Object instance = dataObjectBinder.create(target, context);
+			Object instance = dataObjectBinder.create(target, context); //创建数据绑定实例
 			if (instance != null) {
 				return instance;
 			}
@@ -502,8 +502,8 @@ public class Binder {
 	 * @since 2.2.0
 	 */
 	public static Binder get(Environment environment, BindHandler defaultBindHandler) {
-		Iterable<ConfigurationPropertySource> sources = ConfigurationPropertySources.get(environment);
-		PropertySourcesPlaceholdersResolver placeholdersResolver = new PropertySourcesPlaceholdersResolver(environment);
+		Iterable<ConfigurationPropertySource> sources = ConfigurationPropertySources.get(environment); //获取配置属性资源
+		PropertySourcesPlaceholdersResolver placeholdersResolver = new PropertySourcesPlaceholdersResolver(environment); //属性资源占位符解析器
 		return new Binder(sources, placeholdersResolver, null, null, defaultBindHandler);
 	}
 

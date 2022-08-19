@@ -69,7 +69,7 @@ final class EnvironmentConverter {
 	 * @return the converted Environment
 	 */
 	StandardEnvironment convertEnvironmentIfNecessary(ConfigurableEnvironment environment,
-			Class<? extends StandardEnvironment> type) {
+			Class<? extends StandardEnvironment> type) { //如果不一致则进行转换
 		if (type.equals(environment.getClass())) {
 			return (StandardEnvironment) environment;
 		}
@@ -78,10 +78,10 @@ final class EnvironmentConverter {
 
 	private StandardEnvironment convertEnvironment(ConfigurableEnvironment environment,
 			Class<? extends StandardEnvironment> type) {
-		StandardEnvironment result = createEnvironment(type);
-		result.setActiveProfiles(environment.getActiveProfiles());
-		result.setConversionService(environment.getConversionService());
-		copyPropertySources(environment, result);
+		StandardEnvironment result = createEnvironment(type); //根据类型创建环境
+		result.setActiveProfiles(environment.getActiveProfiles()); //设置active profiles
+		result.setConversionService(environment.getConversionService()); //设置转换服务
+		copyPropertySources(environment, result); //复制属性资源到环境中
 		return result;
 	}
 
@@ -95,7 +95,7 @@ final class EnvironmentConverter {
 	}
 
 	private void copyPropertySources(ConfigurableEnvironment source, StandardEnvironment target) {
-		removePropertySources(target.getPropertySources(), isServletEnvironment(target.getClass(), this.classLoader));
+		removePropertySources(target.getPropertySources(), isServletEnvironment(target.getClass(), this.classLoader)); //删除不包含在环境中的属性
 		for (PropertySource<?> propertySource : source.getPropertySources()) {
 			if (!SERVLET_ENVIRONMENT_SOURCE_NAMES.contains(propertySource.getName())) {
 				target.getPropertySources().addLast(propertySource);
@@ -103,7 +103,7 @@ final class EnvironmentConverter {
 		}
 	}
 
-	private boolean isServletEnvironment(Class<?> conversionType, ClassLoader classLoader) {
+	private boolean isServletEnvironment(Class<?> conversionType, ClassLoader classLoader) { //判断是否是servlet环境
 		try {
 			Class<?> webEnvironmentClass = ClassUtils.forName(CONFIGURABLE_WEB_ENVIRONMENT_CLASS, classLoader);
 			return webEnvironmentClass.isAssignableFrom(conversionType);

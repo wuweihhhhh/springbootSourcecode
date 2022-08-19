@@ -65,11 +65,11 @@ class StartupInfoLogger {
 	private CharSequence getStartingMessage() {
 		StringBuilder message = new StringBuilder();
 		message.append("Starting ");
-		appendApplicationName(message);
-		appendVersion(message, this.sourceClass);
+		appendApplicationName(message);  //添加程序名
+		appendVersion(message, this.sourceClass); //添加版本号
 		appendOn(message);
-		appendPid(message);
-		appendContext(message);
+		appendPid(message); //添加进程id
+		appendContext(message);  //添加上下文信息
 		return message;
 	}
 
